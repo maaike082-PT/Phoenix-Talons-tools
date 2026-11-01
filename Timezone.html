@@ -1,0 +1,232 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phoenix Talons Timezone Converter</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #171923;
+  color: #ffffff;
+  padding: 15px;
+}
+.converter {
+  max-width: 450px;
+  margin: auto;
+  padding: 22px;
+  background: #292d3e;
+  border: 2px solid #d97706;
+  border-radius: 15px;
+}
+h2 {
+  text-align: center;
+  color: #ffad33;
+}
+.subtitle {
+  text-align: center;
+  color: #ddd;
+}
+label {
+  display: block;
+  margin-top: 15px;
+  margin-bottom: 6px;
+}
+input, select, button {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 12px;
+  border-radius: 7px;
+  border: none;
+  font-size: 15px;
+}
+button {
+  margin-top: 18px;
+  background: #d97706;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+.result {
+  margin-top: 20px;
+  padding: 15px;
+  background: #171923;
+  border-radius: 10px;
+  text-align: center;
+}
+.result h3 {
+  color: #ffad33;
+}
+.time {
+  font-size: 27px;
+  font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="converter">
+
+<h2>🔥 PHOENIX TALONS</h2>
+<p class="subtitle">GLOBAL TIMEZONE CONVERTER</p>
+
+<label>Event date</label>
+<input type="date" id="eventDate">
+
+<label>Event time</label>
+<input type="time" id="eventTime" value="19:30">
+
+<label>Event timezone</label>
+<select id="fromZone">
+  <option value="Europe/Amsterdam">Netherlands (CET/CEST)</option>
+  <option value="Europe/London">UK (GMT/BST)</option>
+  <option value="America/New_York">US Eastern</option>
+  <option value="America/Chicago">US Central</option>
+  <option value="America/Los_Angeles">US Pacific</option>
+  <option value="Asia/Kolkata">India (IST)</option>
+  <option value="Asia/Tokyo">Japan (JST)</option>
+  <option value="Australia/Sydney">Australia (Sydney)</option>
+  <option value="Asia/Singapore">Singapore</option>
+  <option value="America/Sao_Paulo">Brazil</option>
+  <option value="Europe/Moscow">Moscow</option>
+</select>
+
+<label>Convert to timezone</label>
+<select id="toZone">
+  <option value="America/New_York">US Eastern</option>
+  <option value="Europe/Amsterdam">Netherlands (CET/CEST)</option>
+  <option value="Europe/London">UK (GMT/BST)</option>
+  <option value="America/Chicago">US Central</option>
+  <option value="America/Los_Angeles">US Pacific</option>
+  <option value="Asia/Kolkata">India (IST)</option>
+  <option value="Asia/Tokyo">Japan (JST)</option>
+  <option value="Australia/Sydney">Australia (Sydney)</option>
+  <option value="Asia/Singapore">Singapore</option>
+  <option value="America/Sao_Paulo">Brazil</option>
+  <option value="Europe/Moscow">Moscow</option>
+</select>
+
+<button onclick="convertTime()">CONVERT TIME</button>
+
+<div class="result" id="result">
+  <h3>🌍 Local Event Time</h3>
+  <div class="time">--:--</div>
+  <p>Select your event and convert!</p>
+</div>
+
+<button onclick="copyResult()">COPY FOR LINE</button>
+
+</div>
+
+<script>
+let convertedText = "";
+
+function getOffset(date, zone) {
+  let parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: zone,
+    timeZoneName: "longOffset"
+  }).formatToParts(date);
+
+  return parts.find(p => p.type === "timeZoneName").value;
+}
+
+function convertTime() {
+  const date = document.getElementById("eventDate").value;
+  const time = document.getElementById("eventTime").value;
+  const from = document.getElementById("fromZone").value;
+  const to = document.getElementById("toZone").value;
+
+  if (!date || !time) {
+    alert("Please select a date and time!");
+    return;
+  }
+
+  const [y, m, d] = date.split("-").map(Number);
+  const [h, min] = time.split(":").map(Number);
+
+  // Convert source local time to UTC, including DST.
+  const desired = Date.UTC(y, m - 1, d, h, min);
+  let utc = desired;
+
+  for (let i = 0; i < 4; i++) {
+    const parts = new Intl.DateTimeFormat("en-GB", {
+      timeZone: from,
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      hourCycle: "h23"
+    }).formatToParts(new Date(utc));
+
+    const values = {};
+    parts.forEach(p => values[p.type] = Number(p.value));
+
+    const represented = Date.UTC(
+      values.year, values.month - 1, values.day,
+      values.hour, values.minute
+    );
+
+    utc += desired - represented;
+  }
+
+  const resultDate = new Date(utc);
+
+  const converted = new Intl.DateTimeFormat("en-GB", {
+    timeZone: to,
+    weekday: "long",
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23"
+  }).format(resultDate);
+
+  const sourceOffset = getOffset(resultDate, from);
+  const targetOffset = getOffset(resultDate, to);
+
+  document.querySelector(".time").textContent =
+    new Intl.DateTimeFormat("en-GB", {
+      timeZone: to,
+      hour: "2-digit",
+      minute: "2-digit",
+      hourCycle: "h23"
+    }).format(resultDate);
+
+  document.getElementById("result").innerHTML = `
+    <h3>🔥 Local Event Time</h3>
+    <div class="time">${
+      new Intl.DateTimeFormat("en-GB", {
+        timeZone: to,
+        hour: "2-digit",
+        minute: "2-digit",
+        hourCycle: "h23"
+      }).format(resultDate)
+    }</div>
+    <p>${converted}</p>
+    <small>${sourceOffset} → ${targetOffset}</small>
+  `;
+
+  convertedText =
+    "🔥 PHOENIX TALONS EVENT 🔥\n" +
+    "Event: " + date + " " + time + "\n" +
+    "Converted time: " + converted + "\n" +
+    "Timezone: " + to;
+}
+
+function copyResult() {
+  if (!convertedText) {
+    alert("Convert a time first!");
+    return;
+  }
+  navigator.clipboard.writeText(convertedText)
+    .then(() => alert("Copied! Ready for LINE."));
+}
+</script>
+
+</body>
+</html>
