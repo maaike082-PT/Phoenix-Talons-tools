@@ -1,0 +1,148 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Phoenix Talons - Monthly Kills</title>
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;padding:20px;
+  background:#15121e;color:#fff;
+  font-family:Arial,sans-serif;
+}
+header{text-align:center;padding:20px 0}
+h1{color:#f3bd55;margin-bottom:5px}
+.subtitle{color:#b9a9ce}
+.card{
+  background:#251d32;padding:18px;
+  border:1px solid #59416d;
+  border-radius:14px;margin:16px 0;
+}
+input,button{
+  width:100%;padding:13px;margin:6px 0;
+  border-radius:8px;border:0;font-size:16px;
+}
+input{background:#eee;color:#222}
+button{
+  background:#d99b36;color:#211629;
+  font-weight:bold;cursor:pointer;
+}
+.stats{display:flex;gap:10px;text-align:center}
+.stat{flex:1;background:#352642;padding:12px;border-radius:10px}
+.stat strong{display:block;color:#f3bd55;font-size:20px}
+table{width:100%;border-collapse:collapse}
+th,td{padding:11px 5px;text-align:left;border-bottom:1px solid #59416d}
+th{color:#f3bd55}
+.rank{color:#f3bd55;font-weight:bold}
+.delete{background:#713d4b;color:white;padding:7px}
+footer{text-align:center;color:#a99bb8;margin-top:25px}
+</style>
+</head>
+<body>
+
+<header>
+<h1>🔥 PHOENIX TALONS 🔥</h1>
+<div class="subtitle">MONTHLY KILLS LEADERBOARD</div>
+</header>
+
+<div class="card stats">
+<div class="stat">Players<strong id="players">0</strong></div>
+<div class="stat">Total kills<strong id="total">0</strong></div>
+<div class="stat">Top player<strong id="leader">-</strong></div>
+</div>
+
+<div class="card">
+<h3>⚔️ Add player results</h3>
+<input id="name" placeholder="Player name">
+<input id="kills" type="number" min="0" placeholder="Monthly kills">
+<button onclick="addPlayer()">ADD PLAYER</button>
+</div>
+
+<div class="card">
+<h3>🏆 Team rankings</h3>
+<table>
+<thead><tr><th>Rank</th><th>Player</th><th>Kills</th><th></th></tr></thead>
+<tbody id="board"></tbody>
+</table>
+</div>
+
+<div class="card">
+<button onclick="exportData()">DOWNLOAD RESULTS (CSV)</button>
+<button onclick="clearData()" style="background:#713d4b;color:white">CLEAR LEADERBOARD</button>
+</div>
+
+<footer>RISE. FIGHT. CONQUER.<br>PHOENIX TALONS</footer>
+
+<script>
+let data=JSON.parse(localStorage.getItem("ptKills")||"[]");
+
+function save(){
+ localStorage.setItem("ptKills",JSON.stringify(data));
+ render();
+}
+
+function addPlayer(){
+ const name=document.getElementById("name").value.trim();
+ const kills=Number(document.getElementById("kills").value);
+ if(!name||!Number.isFinite(kills)||kills<0){
+  alert("Enter a player name and valid kills.");
+  return;
+ }
+ const existing=data.find(p=>p.name.toLowerCase()===name.toLowerCase());
+ if(existing){existing.kills=kills;}
+ else{data.push({name,kills});}
+ document.getElementById("name").value="";
+ document.getElementById("kills").value="";
+ save();
+}
+
+function removePlayer(index){
+ if(confirm("Remove this player?")){
+  data.splice(index,1);save();
+ }
+}
+
+function render(){
+ const sorted=[...data].sort((a,b)=>b.kills-a.kills);
+ document.getElementById("players").textContent=data.length;
+ document.getElementById("total").textContent=
+  data.reduce((sum,p)=>sum+p.kills,0).toLocaleString();
+ document.getElementById("leader").textContent=
+  sorted.length?sorted[0].name:"-";
+ document.getElementById("board").innerHTML=sorted.map((p,i)=>`
+ <tr>
+ <td class="rank">${i+1}</td>
+ <td>${escapeText(p.name)}</td>
+ <td>${p.kills.toLocaleString()}</td>
+ <td><button class="delete" onclick="removePlayer(${data.indexOf(p)})">X</button></td>
+ </tr>`).join("");
+}
+
+function escapeText(value){
+ return String(value).replace(/[&<>"']/g,c=>({
+ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+ })[c]);
+}
+
+function exportData(){
+ let csv="Player,Monthly Kills\n"+
+ data.map(p=>'"'+p.name.replace(/"/g,'""')+'",'+p.kills).join("\n");
+ let a=document.createElement("a");
+ a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));
+ a.download="PT-monthly-kills.csv";
+ a.click();
+ URL.revokeObjectURL(a.href);
+}
+
+function clearData(){
+ if(confirm("Delete all leaderboard results?")){
+  data=[];save();
+ }
+}
+
+render();
+</script>
+</body>
+</html>
