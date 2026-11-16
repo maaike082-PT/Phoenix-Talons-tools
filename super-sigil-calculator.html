@@ -1,0 +1,236 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PT Super Sigil Calculator</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;padding:16px;background:#15121e;color:white;font-family:Arial,sans-serif}
+header{text-align:center;padding:18px 0}
+h1{color:#f3bd55;margin:5px}
+.sub{color:#b9a9ce}
+.card{background:#251d32;padding:17px;border:1px solid #59416d;border-radius:14px;margin:15px 0}
+input,textarea,button{width:100%;padding:13px;margin:6px 0;border:0;border-radius:8px;font-size:16px}
+input,textarea{background:#eee;color:#222}
+textarea{min-height:150px;font-family:monospace}
+button{background:#d99b36;color:#211629;font-weight:bold}
+button.secondary{background:#59416d;color:white}
+button:disabled{opacity:.45}
+.stat{background:#352642;padding:13px;border-radius:9px;text-align:center;margin:7px 0}
+.stat strong{display:block;color:#f3bd55;font-size:25px;margin-top:5px}
+.result{font-size:17px;line-height:1.8}
+#status{color:#c9b8dc;text-align:center;font-size:14px}
+.hidden{display:none}
+footer{text-align:center;color:#a99bb8;margin-top:25px}
+</style>
+</head>
+<body>
+
+<header>
+<h1>🔥 PHOENIX TALONS 🔥</h1>
+<div class="sub">SUPER SIGIL CHEST CALCULATOR</div>
+</header>
+
+<div class="card">
+<div id="status">Connecting to Firebase...</div>
+<button id="loginBtn" class="secondary" onclick="signIn()">LEADERSHIP SIGN IN</button>
+<button id="logoutBtn" class="secondary hidden" onclick="signOutUser()">SIGN OUT</button>
+</div>
+
+<div class="card">
+<h3>🏆 Current event</h3>
+<div id="eventName" class="sub">Loading sequence...</div>
+<div id="sequenceStatus" class="sub"></div>
+</div>
+
+<div class="card">
+<h3>🐉 Calculate your rubies</h3>
+<label>Next chest position (1–130)</label>
+<input id="position" type="number" min="1" max="130" value="1">
+
+<label>Sigils already collected</label>
+<input id="current" type="number" min="0" value="0">
+
+<label>Target sigils</label>
+<input id="target" type="number" min="1" value="5000">
+
+<button onclick="calculate()">CALCULATE RUBIES</button>
+<div id="result" class="result"></div>
+</div>
+
+<div class="card">
+<h3>🔐 Leadership sequence manager</h3>
+<p class="sub">Only PT leadership can update the event sequence.</p>
+
+<label>Event name</label>
+<input id="newEvent" placeholder="Event name">
+
+<label>Paste all 130 chest rewards below</label>
+<textarea id="rewards" placeholder="Paste 130 numbers separated by commas, spaces or new lines. Example: 250, 250, 1000, 250 ..."></textarea>
+
+<div class="sub">Exactly 130 rewards are required. Each number represents the sigils from that chest.</div>
+
+<button id="saveBtn" onclick="saveSequence()" disabled>UPLOAD SEQUENCE TO FIREBASE</button>
+<div id="uploadStatus" class="sub"></div>
+</div>
+
+<footer>RISE. FIGHT. CONQUER.<br>PHOENIX TALONS 🐦‍🔥</footer>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/13.3.0/firebase-app.js";
+import {getAuth,GoogleAuthProvider,signInWithPopup,signOut,onAuthStateChanged} from "https://www.gstatic.com/firebasejs/13.3.0/firebase-auth.js";
+import {getFirestore,doc,setDoc,onSnapshot} from "https://www.gstatic.com/firebasejs/13.3.0/firebase-firestore.js";
+
+const firebaseConfig={
+apiKey:"AIzaSyCDBIYVNVkmyY3bIIKmttI9akfxpNRUF8U",
+authDomain:"phoenix-talons-tools.firebaseapp.com",
+projectId:"phoenix-talons-tools",
+storageBucket:"phoenix-talons-tools.firebasestorage.app",
+messagingSenderId:"959564431396",
+appId:"1:959564431396:web:5cdaaf4e19496e2fd698b1",
+measurementId:"G-J3F9NBM8VM"
+};
+
+const ADMIN="phoenixtalons.leadership@gmail.com";
+const EVENT_ID="week12-gauntlet";
+const CHEST_COST=500;
+const CHEST_COUNT=130;
+
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const db=getFirestore(app);
+const provider=new GoogleAuthProvider();
+const eventRef=doc(db,"sigilSequences",EVENT_ID);
+
+let isAdmin=false;
+let rewards=[];
+let eventTitle="";
+
+function status(t){
+document.getElementById("status").textContent=t;
+}
+
+window.signIn=async()=>{
+try{await signInWithPopup(auth,provider);}
+catch(e){status("Login failed: "+e.message);}
+};
+
+window.signOutUser=async()=>{
+try{await signOut(auth);}
+catch(e){status("Logout failed: "+e.message);}
+};
+
+onAuthStateChanged(auth,user=>{
+isAdmin=!!user&&(user.email||"").toLowerCase()===ADMIN;
+document.getElementById("loginBtn").classList.toggle("hidden",!!user);
+document.getElementById("logoutBtn").classList.toggle("hidden",!user);
+document.getElementById("saveBtn").disabled=!isAdmin;
+
+if(isAdmin)status("Leadership signed in: "+user.email);
+else if(user)status("Signed in with an account without editing permission.");
+else status("Public calculator. Leadership login required for updates.");
+});
+
+onSnapshot(eventRef,snap=>{
+if(!snap.exists()){
+rewards=[];
+eventTitle="";
+document.getElementById("eventName").textContent="No event uploaded yet.";
+document.getElementById("sequenceStatus").textContent="";
+return;
+}
+const data=snap.data();
+eventTitle=data.eventName||"Current event";
+rewards=Array.isArray(data.rewards)?data.rewards:[];
+document.getElementById("eventName").textContent=eventTitle;
+document.getElementById("sequenceStatus").textContent=
+rewards.length===130?"Sequence loaded: 130 chest positions.":"Sequence not uploaded yet.";
+if(isAdmin)document.getElementById("newEvent").value=eventTitle;
+},e=>{
+status("Could not load sequence: "+e.message);
+});
+
+window.saveSequence=async()=>{
+if(!isAdmin)return;
+
+const raw=document.getElementById("rewards").value.trim();
+const name=document.getElementById("newEvent").value.trim();
+const values=raw.split(/[\s,;]+/).filter(Boolean).map(Number);
+
+if(!name){
+alert("Enter the event name.");
+return;
+}
+if(values.length!==130||values.some(n=>!Number.isSafeInteger(n)||n<0)){
+alert("Please enter exactly 130 whole-number rewards. No negative values.");
+return;
+}
+
+if(!confirm("Upload "+name+" with 130 chest rewards? This replaces the current sequence."))return;
+
+try{
+await setDoc(eventRef,{
+eventName:name,
+rewards:values,
+updatedAt:new Date().toISOString(),
+updatedBy:auth.currentUser.email
+},{merge:true});
+document.getElementById("uploadStatus").textContent="Sequence uploaded successfully!";
+document.getElementById("rewards").value="";
+}catch(e){
+document.getElementById("uploadStatus").textContent="Upload failed: "+e.message;
+}
+};
+
+window.calculate=()=>{
+const position=Number(document.getElementById("position").value);
+const current=Number(document.getElementById("current").value);
+const target=Number(document.getElementById("target").value);
+const output=document.getElementById("result");
+
+if(rewards.length!==130){
+output.textContent="The event sequence has not been uploaded yet.";
+return;
+}
+if(!Number.isInteger(position)||position<1||position>130||
+!Number.isSafeInteger(current)||current<0||
+!Number.isSafeInteger(target)||target<1){
+output.textContent="Please enter valid numbers.";
+return;
+}
+
+const needed=Math.max(0,target-current);
+let collected=0;
+let chests=0;
+let pos=position;
+
+while(collected<needed){
+collected+=rewards[pos-1];
+chests++;
+pos=pos===130?1:pos+1;
+if(chests>100000){
+output.textContent="Target is too large to calculate.";
+return;
+}
+}
+
+const rubyCost=chests*CHEST_COST;
+const finalPosition=pos;
+const excess=collected-needed;
+
+output.innerHTML=`
+<div class="stat">Chests required<strong>${chests.toLocaleString()}</strong></div>
+<div class="stat">Ruby cost<strong>${rubyCost.toLocaleString()}</strong></div>
+<div class="stat">Sigils earned<strong>${collected.toLocaleString()}</strong></div>
+<div class="stat">Final sigil balance<strong>${(current+collected).toLocaleString()}</strong></div>
+<p>Starting chest: <b>${position}</b></p>
+<p>Next chest after reaching target: <b>${finalPosition}</b></p>
+<p>Extra sigils above target: <b>${excess.toLocaleString()}</b></p>
+<p class="sub">Calculation includes the starting chest. The sequence restarts at chest 1 after chest 130.</p>
+`;
+};
+</script>
+</body>
+</html>
