@@ -1,270 +1,54 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Phoenix Talons | Command Centre</title>
-
 <style>
-:root {
-  --gold: #e8bd65;
-  --gold-light: #ffe5a3;
-  --purple: #7652b7;
-  --bg: #100e19;
-  --panel: #1d192a;
-  --muted: #aaa2b9;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  background:
-    radial-gradient(ellipse at top, #302044 0%, #100e19 55%);
-  color: #f6f0ff;
-  font-family: Arial, sans-serif;
-  min-height: 100vh;
-}
-
-header {
-  text-align: center;
-  padding: 48px 18px 35px;
-  border-bottom: 1px solid #493653;
-}
-
-.phoenix {
-  font-size: 76px;
-  filter: drop-shadow(0 0 18px #bd813e);
-}
-
-h1 {
-  color: var(--gold-light);
-  font-size: clamp(28px, 7vw, 42px);
-  letter-spacing: 3px;
-  margin: 12px 0;
-  text-shadow: 0 0 18px #9b652d;
-}
-
-.subtitle {
-  color: var(--muted);
-  letter-spacing: 3px;
-  font-size: 12px;
-  text-transform: uppercase;
-}
-
-.motto {
-  color: var(--gold);
-  font-style: italic;
-  margin-top: 22px;
-  font-size: 17px;
-}
-
-main {
-  max-width: 950px;
-  margin: auto;
-  padding: 25px 18px 50px;
-}
-
-.section-title {
-  color: var(--gold);
-  font-size: 19px;
-  letter-spacing: 2px;
-  margin: 24px 0 16px;
-  text-transform: uppercase;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 15px;
-}
-
-.tool {
-  background: linear-gradient(145deg, #292139, #191522);
-  border: 1px solid #57416c;
-  border-radius: 13px;
-  padding: 20px;
-  text-decoration: none;
-  color: white;
-  display: block;
-  transition: 0.2s;
-  position: relative;
-  overflow: hidden;
-}
-
-.tool:hover {
-  border-color: var(--gold);
-  transform: translateY(-3px);
-  box-shadow: 0 5px 22px #0008;
-}
-
-.tool.active {
-  border-color: #bd914c;
-}
-
-.tool-icon {
-  font-size: 35px;
-  margin-bottom: 12px;
-}
-
-.tool h3 {
-  color: var(--gold-light);
-  margin: 0 0 9px;
-  font-size: 18px;
-}
-
-.tool p {
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.6;
-  margin: 0;
-}
-
-.status {
-  display: inline-block;
-  margin-top: 14px;
-  font-size: 10px;
-  letter-spacing: 1px;
-  color: #a7dfb4;
-  border: 1px solid #477d55;
-  padding: 5px 9px;
-  border-radius: 20px;
-}
-
-.status.soon {
-  color: #d2b9f0;
-  border-color: #7652b7;
-}
-
-.welcome {
-  background: #211b30;
-  border: 1px solid #59436d;
-  border-radius: 13px;
-  padding: 22px;
-  margin-top: 30px;
-  line-height: 1.7;
-  color: var(--muted);
-}
-
-.welcome strong {
-  color: var(--gold-light);
-}
-
-footer {
-  text-align: center;
-  padding: 25px 15px;
-  border-top: 1px solid #493653;
-  color: #92899f;
-  font-size: 12px;
-  letter-spacing: 1px;
-}
-
-footer span {
-  color: var(--gold);
-}
-
+:root{--gold:#e8bd65;--gold-light:#ffe5a3;--muted:#aaa2b9}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(ellipse at top,#302044 0%,#100e19 55%);color:#f6f0ff;font-family:Arial,sans-serif;min-height:100vh}
+header{text-align:center;padding:48px 18px 35px;border-bottom:1px solid #493653}
+.phoenix{font-size:76px;filter:drop-shadow(0 0 18px #bd813e)}
+h1{color:var(--gold-light);font-size:clamp(28px,7vw,42px);letter-spacing:3px;margin:12px 0;text-shadow:0 0 18px #9b652d}
+.subtitle{color:var(--muted);letter-spacing:3px;font-size:12px;text-transform:uppercase}
+.motto{color:var(--gold);font-style:italic;margin-top:22px;font-size:17px}
+main{max-width:950px;margin:auto;padding:25px 18px 50px}
+.section-title{color:var(--gold);font-size:19px;letter-spacing:2px;margin:24px 0 16px;text-transform:uppercase}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}
+.tool{background:linear-gradient(145deg,#292139,#191522);border:1px solid #57416c;border-radius:13px;padding:20px;text-decoration:none;color:white;display:block;transition:.2s;position:relative;overflow:hidden}
+.tool:hover{border-color:var(--gold);transform:translateY(-3px);box-shadow:0 5px 22px #0008}
+.tool.active{border-color:#bd914c}
+.tool-icon{font-size:35px;margin-bottom:12px}
+.tool h3{color:var(--gold-light);margin:0 0 9px;font-size:18px}
+.tool p{color:var(--muted);font-size:13px;line-height:1.6;margin:0}
+.status{display:inline-block;margin-top:14px;font-size:10px;letter-spacing:1px;color:#a7dfb4;border:1px solid #477d55;padding:5px 9px;border-radius:20px}
+.status.soon{color:#d2b9f0;border-color:#7652b7}
+.welcome{background:#211b30;border:1px solid #59436d;border-radius:13px;padding:22px;margin-top:30px;line-height:1.7;color:var(--muted)}
+.welcome strong{color:var(--gold-light)}
+footer{text-align:center;padding:25px 15px;border-top:1px solid #493653;color:#92899f;font-size:12px;letter-spacing:1px}
+footer span{color:var(--gold)}
 </style>
 </head>
-
 <body>
-
-<header>
-  <div class="phoenix">🐦‍🔥</div>
-  <h1>PHOENIX TALONS</h1>
-  <div class="subtitle">The Official Team Command Centre</div>
-  <div class="motto">Rise Together. Fight Together. Fly Higher.</div>
-</header>
-
+<header><div class="phoenix">🐦‍🔥</div><h1>PHOENIX TALONS</h1><div class="subtitle">The Official Team Command Centre</div><div class="motto">Rise Together. Fight Together. Fly Higher.</div></header>
 <main>
-
-  <h2 class="section-title">⚔️ War Room & Tools</h2>
-
-  <div class="grid">
-<a class="tool active" href="monthly-kills.html">
-  <div class="tool-icon">🏆</div>
-  <h3>Monthly Kills Leaderboard</h3>
-  <p>Track team monthly kills and follow the live rankings.</p>
-  <span class="status">● AVAILABLE</span>
-</a>
-    
-<a class="tool active" href="super-sigil-calculator.html">
-  <div class="tool-icon">🐉</div>
-  <h3>Super Sigil Calculator</h3>
-  <p>Calculate sigils, chest rewards and ruby costs for every event.</p>
-  <span class="status">● AVAILABLE</span>
-</a>
-    <a class="tool active" href="Timezone.html">
-      <div class="tool-icon">🌍</div>
-      <h3>Timezone Calculator</h3>
-      <p>Coordinate events and guardswaps across all timezones.</p>
-      <span class="status">● AVAILABLE</span>
-    </a>
-
-    <a class="tool active"
-       href="https://niazdokrat.github.io/WDGlorySwapCalc"
-       target="_blank" rel="noopener">
-      <div class="tool-icon">🏆</div>
-      <h3>Glory Swap Calculator</h3>
-      <p>Calculate fair glory swaps using AP and DP ratios.</p>
-      <span class="status">● AVAILABLE</span>
-    </a>
-
-    <div class="tool">
-      <div class="tool-icon">🏰</div>
-      <h3>Atlas Command Centre</h3>
-      <p>Castle assignments, prim management, guardswaps and Atlas strategy.</p>
-      <span class="status soon">COMING SOON</span>
-    </div>
-
-    <div class="tool">
-      <div class="tool-icon">🐉</div>
-      <h3>Dragon & Breeding Tools</h3>
-      <p>Breeding planning, dragon progression and event preparation.</p>
-      <span class="status soon">COMING SOON</span>
-    </div>
-
-    <div class="tool">
-      <div class="tool-icon">⚡</div>
-      <h3>Assault Predictor</h3>
-      <p>Track chest sequences and help predict upcoming rewards.</p>
-      <span class="status soon">COMING SOON</span>
-    </div>
-
-    <div class="tool">
-      <div class="tool-icon">🔥</div>
-      <h3>Recruitment Hunter</h3>
-      <p>Find potential warriors and discover new recruits for Phoenix Talons.</p>
-      <span class="status soon">COMING SOON</span>
-    </div>
-
-  </div>
-
-  <h2 class="section-title">🛡️ Phoenix Talons</h2>
-
-  <div class="welcome">
-    <strong>Welcome to our Command Centre, Talons!</strong>
-    <br><br>
-    This is where our warriors find the tools, information
-    and strategies needed to grow stronger together.
-    <br><br>
-    Whether you're conquering Atlas, dominating PvP,
-    planning your next dragon or chasing glory,
-    everything starts here.
-    <br><br>
-    <strong>One team. One force. One rising Phoenix.</strong>
-  </div>
-<p><a href="monthly-kills.html" style="display:inline-block;padding:14px 22px;background:#7652b7;color:#fff;text-decoration:none;border:1px solid #e8bd65;border-radius:10px;font-weight:bold;">🏆 MONTHLY KILLS LEADERBOARD</a></p>
+<h2 class="section-title">⚔️ War Room &amp; Tools</h2>
+<div class="grid">
+<a class="tool active" href="monthly-kills.html"><div class="tool-icon">🏆</div><h3>Monthly Kills Leaderboard</h3><p>Track team monthly kills and follow the live rankings.</p><span class="status">● AVAILABLE</span></a>
+<a class="tool active" href="super-sigil-calculator.html"><div class="tool-icon">🐉</div><h3>Super Sigil Calculator</h3><p>Calculate sigils, chest rewards and ruby costs for every event.</p><span class="status">● AVAILABLE</span></a>
+<a class="tool active" href="Timezone.html"><div class="tool-icon">🌍</div><h3>Timezone Calculator</h3><p>Coordinate events and guardswaps across all timezones.</p><span class="status">● AVAILABLE</span></a>
+<a class="tool active" href="https://niazdokrat.github.io/WDGlorySwapCalc" target="_blank" rel="noopener"><div class="tool-icon">🏆</div><h3>Glory Swap Calculator</h3><p>Calculate fair glory swaps using AP and DP ratios.</p><span class="status">● AVAILABLE</span></a>
+<a class="tool active" href="atlas-command-center.html"><div class="tool-icon">🏰</div><h3>Atlas Command Centre</h3><p>Castle assignments, prim management, guardswaps and Atlas strategy.</p><span class="status">● AVAILABLE</span></a>
+<a class="tool active" href="prim-assignment-manager.html"><div class="tool-icon">🛡️</div><h3>Prim Assignment Manager</h3><p>Organise Prim assignments and track troop loading for PT castles.</p><span class="status">● AVAILABLE</span></a>
+<div class="tool"><div class="tool-icon">🐉</div><h3>Dragon &amp; Breeding Tools</h3><p>Breeding planning, dragon progression and event preparation.</p><span class="status soon">COMING SOON</span></div>
+<div class="tool"><div class="tool-icon">⚡</div><h3>Assault Predictor</h3><p>Track chest sequences and help predict upcoming rewards.</p><span class="status soon">COMING SOON</span></div>
+<div class="tool"><div class="tool-icon">🔥</div><h3>Recruitment Hunter</h3><p>Find potential warriors and discover new recruits for Phoenix Talons.</p><span class="status soon">COMING SOON</span></div>
+</div>
+<h2 class="section-title">🛡️ Phoenix Talons</h2>
+<div class="welcome"><strong>Welcome to our Command Centre, Talons!</strong><br><br>This is where our warriors find the tools, information and strategies needed to grow stronger together.<br><br>Whether you're conquering Atlas, dominating PvP, planning your next dragon or chasing glory, everything starts here.<br><br><strong>One team. One force. One rising Phoenix.</strong></div>
+<p><a href="monthly-kills.html" style="display:inline-block;padding:14px 22px;background:#7652b7;color:#fff;text-decoration:none;border:1px solid #e8bd65;border-radius:10px;font-weight:bold">🏆 MONTHLY KILLS LEADERBOARD</a></p>
 </main>
-
-<footer>
-  <span>🐦‍🔥 PHOENIX TALONS</span>
-  <br><br>
-  RISE FROM THE ASHES. RULE THE SKIES.
-</footer>
-
+<footer><span>🐦‍🔥 PHOENIX TALONS</span><br><br>RISE FROM THE ASHES. RULE THE SKIES.</footer>
 </body>
 </html>
-
