@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#100e19">
+<title>Phoenix Talons | Prim Assignment Manager</title>
+<style>
+:root{--gold:#e8bd65;--gold2:#ffe5a3;--panel:#1d192a;--panel2:#292139;--muted:#aaa2b9;--line:#57416c;--green:#78d6a0}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#302044 0%,#100e19 55%);color:#f6f0ff;font-family:Arial,sans-serif;min-height:100vh}
+header{text-align:center;padding:30px 16px 24px;border-bottom:1px solid #493653}.phoenix{font-size:54px;filter:drop-shadow(0 0 14px #bd813e)}
+h1{color:var(--gold2);font-size:clamp(25px,6vw,38px);letter-spacing:2px;margin:8px 0;text-shadow:0 0 18px #9b652d}.subtitle{color:var(--muted);letter-spacing:2px;font-size:11px;text-transform:uppercase}.motto{color:var(--gold);font-style:italic;margin-top:12px}
+main{max-width:1050px;margin:auto;padding:20px 14px 45px}.topbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:16px}.back{color:var(--gold2);text-decoration:none;border:1px solid var(--line);border-radius:9px;padding:10px 13px;background:var(--panel)}
+.note{background:#171321;border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:9px;padding:13px;color:#d8cde5;font-size:13px;line-height:1.55;margin:14px 0}.note strong{color:var(--gold2)}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.stat,.panel{background:linear-gradient(145deg,var(--panel2),#191522);border:1px solid var(--line);border-radius:13px}.stat{padding:14px;text-align:center}.stat strong{display:block;color:var(--gold2);font-size:clamp(20px,4vw,28px);margin-bottom:4px}.stat span{color:var(--muted);font-size:10px;letter-spacing:.8px;text-transform:uppercase}
+h2{color:var(--gold);font-size:17px;letter-spacing:1.3px;text-transform:uppercase;margin:25px 0 12px}.panel{padding:16px;margin-top:14px}.formgrid{display:grid;grid-template-columns:1.2fr 1.2fr .7fr 1fr;gap:10px}.field label{display:block;color:var(--muted);font-size:11px;margin:0 0 6px}.field input,.field select{width:100%;min-width:0;background:#120f1b;color:#fff;border:1px solid var(--line);border-radius:8px;padding:12px;font:inherit}
+button{font:inherit;border:1px solid var(--line);border-radius:8px;padding:11px 13px;background:var(--gold);color:#211629;font-weight:bold;cursor:pointer}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.secondary{background:#40314f;color:#f6f0ff}.danger{background:#713d4b;color:white}.small{padding:7px 9px;font-size:12px}.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.toolbar input{flex:1;min-width:170px;background:#120f1b;color:#fff;border:1px solid var(--line);border-radius:8px;padding:10px}
+.tablewrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:760px}th,td{text-align:left;padding:10px 8px;border-bottom:1px solid #493653;font-size:13px}th{color:var(--gold);font-size:10px;text-transform:uppercase;letter-spacing:.7px}td{color:#eee7f6}.progress{height:8px;background:#100e19;border-radius:9px;overflow:hidden;min-width:75px}.bar{height:100%;background:var(--green);border-radius:9px}.good{color:var(--green)}.pending{color:var(--gold2)}.empty{text-align:center;color:var(--muted);padding:22px}.castle-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.castlebox{background:#171321;border:1px solid #493653;border-radius:9px;padding:11px}.castlebox strong{color:var(--gold2)}.castlebox small{display:block;color:var(--muted);margin-top:4px;line-height:1.5}
+#status{color:var(--muted);font-size:12px;margin-top:10px;min-height:16px}footer{text-align:center;padding:22px 12px;color:#92899f;font-size:11px;letter-spacing:1px;border-top:1px solid #493653}footer span{color:var(--gold)}
+@media(max-width:700px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.formgrid{grid-template-columns:1fr 1fr}.castle-summary{grid-template-columns:1fr}}
+@media(max-width:420px){.formgrid{grid-template-columns:1fr}.actions button{flex:1}}
+</style>
+</head>
+<body>
+<header><div class="phoenix">🐦‍🔥</div><h1>PRIM ASSIGNMENT MANAGER</h1><div class="subtitle">Phoenix Talons · Atlas Operations</div><div class="motto">Load Smart. Assign Fair. Hold Strong.</div></header>
+<main>
+<div class="topbar"><a class="back" href="atlas-command-center.html">← Atlas Command Centre</a><a class="back" href="index.html">Toolbox home</a></div>
+<div class="note"><strong>Assignment rule:</strong> each Prim assigned to a castle has a loading target of <strong>6,500 troops</strong>. The target is calculated from the number of Prims entered. Only add assignments confirmed by PT leadership. This tool does not import or change live War Dragons data.</div>
+<section class="stats" aria-label="Assignment totals">
+<div class="stat"><strong id="primTotal">0</strong><span>Prims assigned</span></div><div class="stat"><strong id="targetTotal">0</strong><span>Troop target</span></div><div class="stat"><strong id="loadedTotal">0</strong><span>Troops loaded</span></div><div class="stat"><strong id="remainingTotal">0</strong><span>Still to load</span></div>
+</section>
+<h2>✍️ Add or update an assignment</h2>
+<section class="panel">
+<div class="formgrid">
+<div class="field"><label for="castle">PT castle</label><select id="castle"><option>EarthBoundSun</option><option>WeStartHere</option><option>ToxicTalons</option><option>WhoSowsTheWind</option><option>BrotherWarrior</option><option>GhostFire</option></select></div>
+<div class="field"><label for="player">Player name</label><input id="player" placeholder="Enter exact game name" autocomplete="off"></div>
+<div class="field"><label for="prims">Prims assigned</label><input id="prims" type="number" min="1" step="1" value="1"></div>
+<div class="field"><label for="loaded">Troops loaded</label><input id="loaded" type="number" min="0" step="1" value="0"></div>
+</div>
+<div class="actions"><button id="saveBtn" type="button">＋ Save assignment</button><button id="cancelBtn" class="secondary" type="button" hidden>Cancel edit</button><button id="exportBtn" class="secondary" type="button">Export CSV</button></div>
+<div id="status" role="status" aria-live="polite">No assignments entered yet. Add confirmed PT assignments above.</div>
+</section>
+<h2>📋 Assignment register</h2>
+<div class="toolbar"><input id="search" type="search" placeholder="Search player or castle…" aria-label="Search assignments"><button id="clearBtn" class="danger" type="button">Clear all records</button></div>
+<section class="panel tablewrap"><table><thead><tr><th>Castle</th><th>Player</th><th>Prims</th><th>Target</th><th>Loaded</th><th>Remaining</th><th>Progress</th><th>Actions</th></tr></thead><tbody id="rows"><tr><td colspan="8" class="empty">No assignments entered yet.</td></tr></tbody></table></section>
+<h2>🏰 Castle loading overview</h2>
+<section class="panel"><div id="castleSummary" class="castle-summary"></div></section>
+<div class="note"><strong>Saving and sharing:</strong> this first version saves records in this browser on this device only. Other leaders will not see your entries yet. We will connect shared leadership sign-in and secure cloud storage after the assignment workflow is tested. Export CSV to keep a backup in the meantime.</div>
+</main>
+<footer><span>🐦‍🔥 PHOENIX TALONS</span><br><br>RISE FROM THE ASHES. RULE THE SKIES.</footer>
+<script>
+const TARGET_PER_PRIM=6500;
+const CASTLES=["EarthBoundSun","WeStartHere","ToxicTalons","WhoSowsTheWind","BrotherWarrior","GhostFire"];
+const STORE_KEY="ptPrimAssignmentsV1";
+let records=[],editingId=null;
+const $=id=>document.getElementById(id),fmt=n=>Number(n||0).toLocaleString("en-US");
+function safeLoad(){try{const raw=localStorage.getItem(STORE_KEY);records=raw?JSON.parse(raw):[];if(!Array.isArray(records))records=[];}catch(e){records=[];$("status").textContent="Browser storage is unavailable. You can still use this page during this session, but records may not persist.";}}
+function persist(){try{localStorage.setItem(STORE_KEY,JSON.stringify(records));$("status").textContent="Saved in this browser on this device.";}catch(e){$("status").textContent="Could not save to browser storage. Export a CSV backup.";}}
+function escapeHTML(v){return String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
+function totals(){return records.reduce((a,r)=>{a.prims+=r.prims;a.target+=r.prims*TARGET_PER_PRIM;a.loaded+=r.loaded;return a;},{prims:0,target:0,loaded:0});}
+function render(){
+const t=totals(),remaining=Math.max(0,t.target-t.loaded);
+$("primTotal").textContent=fmt(t.prims);$("targetTotal").textContent=fmt(t.target);$("loadedTotal").textContent=fmt(t.loaded);$("remainingTotal").textContent=fmt(remaining);
+const q=$("search").value.trim().toLowerCase(),visible=records.filter(r=>(r.castle+" "+r.player).toLowerCase().includes(q));
+$("rows").innerHTML=visible.length?visible.map(r=>{const target=r.prims*TARGET_PER_PRIM,done=target?Math.min(100,Math.round(r.loaded/target*100)):0,left=Math.max(0,target-r.loaded);return '<tr><td>'+escapeHTML(r.castle)+'</td><td>'+escapeHTML(r.player)+'</td><td>'+fmt(r.prims)+'</td><td>'+fmt(target)+'</td><td>'+fmt(r.loaded)+'</td><td class="'+(left===0?"good":"pending")+'">'+fmt(left)+'</td><td><div class="progress"><div class="bar" style="width:'+done+'%"></div></div><small>'+done+'%</small></td><td><button class="small secondary" data-edit="'+r.id+'">Edit</button> <button class="small danger" data-delete="'+r.id+'">Delete</button></td></tr>';}).join(""):'<tr><td colspan="8" class="empty">No matching assignments.</td></tr>';
+$("castleSummary").innerHTML=CASTLES.map(c=>{const list=records.filter(r=>r.castle===c),p=list.reduce((s,r)=>s+r.prims,0),target=p*TARGET_PER_PRIM,loaded=list.reduce((s,r)=>s+r.loaded,0),left=Math.max(0,target-loaded);return '<div class="castlebox"><strong>'+c+'</strong><small>'+p+' Prims · Target '+fmt(target)+' · Loaded '+fmt(loaded)+' · Remaining '+fmt(left)+'</small></div>';}).join("");
+}
+function resetForm(){editingId=null;$("player").value="";$("prims").value="1";$("loaded").value="0";$("saveBtn").textContent="＋ Save assignment";$("cancelBtn").hidden=true;}
+$("saveBtn").addEventListener("click",()=>{const castle=$("castle").value,player=$("player").value.trim(),prims=Number($("prims").value),loaded=Number($("loaded").value);if(!CASTLES.includes(castle)||!player||!Number.isSafeInteger(prims)||prims<1||!Number.isSafeInteger(loaded)||loaded<0){$("status").textContent="Enter a player name, at least 1 Prim, and a whole number of loaded troops.";return;}const duplicate=records.find(r=>r.castle===castle&&r.player.toLowerCase()===player.toLowerCase()&&r.id!==editingId);if(duplicate){$("status").textContent="That player already has an entry for this castle. Edit the existing record instead.";return;}if(editingId){records=records.map(r=>r.id===editingId?{...r,castle,player,prims,loaded}:r);}else{records.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,7),castle,player,prims,loaded});}persist();resetForm();render();});
+$("cancelBtn").addEventListener("click",resetForm);
+$("rows").addEventListener("click",e=>{const edit=e.target.closest("[data-edit]"),del=e.target.closest("[data-delete]");if(edit){const r=records.find(x=>x.id===edit.dataset.edit);if(!r)return;$("castle").value=r.castle;$("player").value=r.player;$("prims").value=r.prims;$("loaded").value=r.loaded;editingId=r.id;$("saveBtn").textContent="Save changes";$("cancelBtn").hidden=false;window.scrollTo({top:0,behavior:"smooth"});}if(del){const r=records.find(x=>x.id===del.dataset.delete);if(r&&confirm("Delete the assignment for "+r.player+" at "+r.castle+"?")){records=records.filter(x=>x.id!==r.id);persist();if(editingId===r.id)resetForm();render();}}});
+$("search").addEventListener("input",render);
+$("clearBtn").addEventListener("click",()=>{if(records.length&&confirm("Delete every assignment saved in this browser? Export a CSV first if you need a backup.")){records=[];persist();resetForm();render();}});
+$("exportBtn").addEventListener("click",()=>{const head=["Castle","Player","Prims","Target Troops","Loaded Troops","Remaining Troops"];const lines=[head,...records.map(r=>[r.castle,r.player,r.prims,r.prims*TARGET_PER_PRIM,r.loaded,Math.max(0,r.prims*TARGET_PER_PRIM-r.loaded)])];const csv=lines.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(",")).join("\n");const a=document.createElement("a"),url=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.href=url;a.download="PT-Prim-Assignments.csv";a.click();URL.revokeObjectURL(url);});
+safeLoad();render();
+</script>
+</body>
+</html>
