@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#100e19">
+<title>Phoenix Talons | Prim Assignment Manager V2</title>
+<style>
+:root{--gold:#e8bd65;--gold2:#ffe5a3;--panel:#1d192a;--panel2:#292139;--muted:#aaa2b9;--line:#57416c;--green:#78d6a0;--red:#ff9aaa}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#302044 0%,#100e19 55%);color:#f6f0ff;font-family:Arial,sans-serif;min-height:100vh}
+header{text-align:center;padding:28px 16px 22px;border-bottom:1px solid #493653}.phoenix{font-size:52px}h1{color:var(--gold2);font-size:clamp(24px,6vw,36px);letter-spacing:1px;margin:8px 0}.subtitle{color:var(--muted);letter-spacing:2px;font-size:11px;text-transform:uppercase}.motto{color:var(--gold);font-style:italic;margin-top:10px}
+main{max-width:1050px;margin:auto;padding:18px 13px 42px}.topbar{display:flex;gap:9px;flex-wrap:wrap}.back{color:var(--gold2);text-decoration:none;border:1px solid var(--line);border-radius:9px;padding:10px 12px;background:var(--panel)}
+.panel,.stat{background:linear-gradient(145deg,var(--panel2),#191522);border:1px solid var(--line);border-radius:13px}.panel{padding:15px;margin-top:14px}.cloudbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.cloudbar p{margin:5px 0 0;color:var(--muted);font-size:12px}.signedin{color:var(--green)!important}
+button{font:inherit;border:1px solid var(--line);border-radius:8px;padding:11px 13px;background:var(--gold);color:#211629;font-weight:bold;cursor:pointer}.secondary{background:#40314f;color:#f6f0ff}.danger{background:#713d4b;color:white}.small{padding:7px 9px;font-size:12px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.note{background:#171321;border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:9px;padding:12px;color:#d8cde5;font-size:13px;line-height:1.55;margin:14px 0}.note strong{color:var(--gold2)}
+h2{color:var(--gold);font-size:17px;letter-spacing:1px;text-transform:uppercase;margin:24px 0 10px}.formgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}.field label{display:block;color:var(--muted);font-size:11px;margin:0 0 6px}.field input,.field select,.toolbar input{width:100%;min-width:0;background:#120f1b;color:#fff;border:1px solid var(--line);border-radius:8px;padding:12px;font:inherit}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px;margin-top:14px}.stat{padding:13px;text-align:center}.stat strong{display:block;color:var(--gold2);font-size:24px;margin-bottom:4px}.stat span{color:var(--muted);font-size:10px;text-transform:uppercase}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.toolbar input{flex:1;min-width:160px}.tablewrap{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:680px}th,td{text-align:left;padding:10px 8px;border-bottom:1px solid #493653;font-size:13px}th{color:var(--gold);font-size:10px;text-transform:uppercase}td{color:#eee7f6}.empty{text-align:center;color:var(--muted);padding:20px}.type{display:inline-block;border-radius:20px;padding:4px 8px;font-size:11px;font-weight:bold;background:#40314f}.Trapper{color:#a8d8ff}.Taunter{color:#ffbd86}.Destroyer{color:#ff9aaa}.legacy{color:#ffda83}.castle-summary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.castlebox{background:#171321;border:1px solid #493653;border-radius:9px;padding:11px}.castlebox strong{color:var(--gold2)}.castlebox small{display:block;color:var(--muted);margin-top:5px;line-height:1.5}
+#status{color:var(--muted);font-size:12px;margin-top:10px;min-height:17px}footer{text-align:center;padding:20px;color:#92899f;font-size:11px;border-top:1px solid #493653}footer span{color:var(--gold)}
+@media(max-width:650px){.stats{grid-template-columns:repeat(2,1fr)}.formgrid,.castle-summary{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><div class="phoenix">🐦‍🔥</div><h1>PRIM ASSIGNMENT MANAGER V2</h1><div class="subtitle">Phoenix Talons · Atlas Operations</div><div class="motto">Load Smart. Assign Fair. Hold Strong.</div></header>
+<main>
+<div class="topbar"><a class="back" href="atlas-command-center.html">← Atlas Command Centre</a><a class="back" href="index.html">Toolbox home</a></div>
+<section class="panel"><div class="cloudbar"><div><strong>☁️ Shared PT assignments</strong><p id="authStatus">Connecting to Phoenix Talons cloud…</p></div><div class="actions" style="margin:0"><button id="loginBtn">Sign in with Google</button><button id="logoutBtn" class="secondary" hidden>Sign out</button></div></div></section>
+<div class="note"><strong>Assignment rules:</strong><br>
+• Each player can have a maximum of <strong>4 Prims</strong>.<br>
+• Prim 1 and Prim 2 must be on <strong>different PT castles</strong> and must be <strong>different Prim types</strong>.<br>
+• Prim 3 and Prim 4 may be any type and may be placed on any PT castle.<br>
+• Prim types: <strong>Trapper, Taunter, Destroyer</strong>.<br>
+• Load target: <strong>6,500 troops per Prim</strong>.<br>
+Only PT castles are available. This tool records leadership assignments and does not change live War Dragons data.</div>
+<section class="stats">
+<div class="stat"><strong id="primTotal">0</strong><span>Typed Prims assigned</span></div><div class="stat"><strong id="targetTotal">0</strong><span>Troop target</span></div><div class="stat"><strong id="loadedTotal">0</strong><span>Troops loaded</span></div><div class="stat"><strong id="remainingTotal">0</strong><span>Still to load</span></div>
+</section>
+<h2>✍️ Add a Prim</h2>
+<section class="panel">
+<div class="formgrid">
+<div class="field"><label for="castle">PT castle</label><select id="castle"><option>EarthBoundSun</option><option>WeStartHere</option><option>ToxicTalons</option><option>WhoSowsTheWind</option><option>BrotherWarrior</option><option>GhostFire</option></select></div>
+<div class="field"><label for="player">Player name</label><input id="player" placeholder="Exact in-game name" autocomplete="off"></div>
+<div class="field"><label for="primType">Prim type</label><select id="primType"><option>Trapper</option><option>Taunter</option><option>Destroyer</option></select></div>
+</div>
+<div class="field" style="margin-top:10px;max-width:260px"><label for="loaded">Troops loaded</label><input id="loaded" type="number" min="0" step="1" value="0"></div>
+<div class="actions"><button id="saveBtn">＋ Save Prim assignment</button><button id="exportBtn" class="secondary">Export CSV</button></div>
+<div id="status" role="status" aria-live="polite">Sign in with the PT leadership Google account to manage assignments. Team members can view.</div>
+</section>
+<h2>📋 Typed Prim register</h2>
+<div class="toolbar"><input id="search" type="search" placeholder="Search player, castle or type…"><button id="clearBtn" class="danger">Clear V2 records</button></div>
+<section class="panel tablewrap"><table><thead><tr><th>Castle</th><th>Player</th><th>Prim type</th><th>Troops loaded</th><th>Actions</th></tr></thead><tbody id="rows"><tr><td colspan="5" class="empty">No typed Prim assignments yet.</td></tr></tbody></table></section>
+<h2>🏰 Castle overview</h2>
+<section class="panel"><div id="castleSummary" class="castle-summary"></div></section>
+<h2>📦 Previous assignments</h2>
+<div class="note"><strong>Legacy records:</strong> Entries created in the old manager do not contain Prim types. They remain visible below and are not automatically converted or counted as typed Prims. Leadership should review them and re-enter each Prim with its correct type before removing old entries.</div>
+<section class="panel tablewrap"><table><thead><tr><th>Castle</th><th>Player</th><th>Old Prim count</th><th>Loaded</th><th>Status</th><th>Leadership action</th></tr></thead><tbody id="legacyRows"><tr><td colspan="6" class="empty">Checking previous records…</td></tr></tbody></table></section>
+<div class="note"><strong>Access:</strong> team members can view shared assignments. Only <strong>phoenixtalons.leadership@gmail.com</strong> can add or delete records, enforced by the existing Firebase sign-in check and your database security rules.</div>
+</main>
+<footer><span>🐦‍🔥 PHOENIX TALONS</span><br><br>RISE FROM THE ASHES. RULE THE SKIES.</footer>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig={apiKey:"AIzaSyCDBIYVNVkmyY3bIIKmttI9akfxpNRUF8U",authDomain:"phoenix-talons-tools.firebaseapp.com",projectId:"phoenix-talons-tools",storageBucket:"phoenix-talons-tools.firebasestorage.app",messagingSenderId:"959564431396",appId:"1:959564431396:web:5cdaaf4e19496e2fd698b1",measurementId:"G-J3F9NBM8VM"};
+firebase.initializeApp(firebaseConfig);
+const auth=firebase.auth(),db=firebase.firestore(),ref=db.collection("primAssignments");
+const LEADER="phoenixtalons.leadership@gmail.com",TARGET=6500;
+const CASTLES=["EarthBoundSun","WeStartHere","ToxicTalons","WhoSowsTheWind","BrotherWarrior","GhostFire"];
+const TYPES=["Trapper","Taunter","Destroyer"];
+let user=null,typed=[],legacy=[],unsubscribe=null;
+const $=id=>document.getElementById(id),fmt=n=>Number(n||0).toLocaleString("en-US");
+const leader=()=>!!user&&String(user.email||"").toLowerCase()===LEADER;
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function message(s){$("status").textContent=s}
+function refreshAuth(){const ok=leader();$("authStatus").textContent=user?`Signed in as ${user.email}${ok?" · Leadership access":" · View only"}`:"Not signed in · Sign in with the PT leadership Google account."; $("authStatus").className=ok?"signedin":"";$("loginBtn").hidden=!!user;$("logoutBtn").hidden=!user;$("saveBtn").disabled=!ok;$("clearBtn").disabled=!ok;}
+function playerRecords(name){return typed.filter(r=>r.player.toLowerCase()===name.toLowerCase());}
+function render(){
+ const total=typed.length,target=total*TARGET,loaded=typed.reduce((s,r)=>s+(Number(r.loaded)||0),0);
+ $("primTotal").textContent=fmt(total);$("targetTotal").textContent=fmt(target);$("loadedTotal").textContent=fmt(loaded);$("remainingTotal").textContent=fmt(Math.max(0,target-loaded));
+ const q=$("search").value.trim().toLowerCase(),list=typed.filter(r=>(r.player+" "+r.castle+" "+r.primType).toLowerCase().includes(q));
+ $("rows").innerHTML=list.length?list.map(r=>`<tr><td>${esc(r.castle)}</td><td>${esc(r.player)}</td><td><span class="type ${esc(r.primType)}">${esc(r.primType)}</span></td><td>${fmt(r.loaded)} / ${fmt(TARGET)}</td><td>${leader()?`<button class="small danger" data-del="${esc(r.id)}">Delete</button>`:"View only"}</td></tr>`).join(""):'<tr><td colspan="5" class="empty">No matching typed assignments.</td></tr>';
+ $("castleSummary").innerHTML=CASTLES.map(c=>{const a=typed.filter(r=>r.castle===c),p=a.length,l=a.reduce((s,r)=>s+(Number(r.loaded)||0),0);return `<div class="castlebox"><strong>${esc(c)}</strong><small>${p} typed Prim(s) · ${fmt(p*TARGET)} troop target<br>${fmt(l)} loaded · ${fmt(Math.max(0,p*TARGET-l))} remaining</small></div>`;}).join("");
+ $("legacyRows").innerHTML=legacy.length?legacy.map(r=>`<tr><td>${esc(r.castle)}</td><td>${esc(r.player)}</td><td>${fmt(r.prims)}</td><td>${fmt(r.loaded)}</td><td class="legacy">Type unknown · review needed</td><td>${leader()?`<button class="small danger" data-legacy="${esc(r.id)}">Remove old record</button>`:"View only"}</td></tr>`).join(""):'<tr><td colspan="6" class="empty">No previous-format records found.</td></tr>';
+}
+function watch(){
+ if(unsubscribe)unsubscribe();
+ unsubscribe=ref.onSnapshot(snap=>{typed=[];legacy=[];snap.forEach(doc=>{const d=doc.data();if(doc.id==="settings"||doc.id==="setup")return;if(d.recordType==="prim-v2")typed.push({...d,id:doc.id});else if(d.recordType==="assignment")legacy.push({...d,id:doc.id});});render();message("Live cloud sync connected. Shared PT assignments are up to date.");},e=>message("Cloud sync error: "+e.message));
+}
+auth.onAuthStateChanged(u=>{user=u;refreshAuth();watch();render();});
+$("loginBtn").onclick=async()=>{try{await auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());}catch(e){message("Sign-in error: "+e.message);}};
+$("logoutBtn").onclick=()=>auth.signOut();
+$("saveBtn").onclick=async()=>{
+ if(!leader()){message("Sign in with the PT leadership Google account first.");return;}
+ const castle=$("castle").value,player=$("player").value.trim(),primType=$("primType").value,loaded=Number($("loaded").value);
+ if(!CASTLES.includes(castle)||!player||!TYPES.includes(primType)||!Number.isSafeInteger(loaded)||loaded<0){message("Check the castle, player name, Prim type and loaded troop count.");return;}
+ const mine=playerRecords(player);
+ if(mine.length>=4){message("This player already has 4 typed Prims. Maximum reached.");return;}
+ if(mine.length<2&&mine.some(r=>r.castle===castle)){message("For the first two Prims, the castles must be different.");return;}
+ if(mine.length<2&&mine.some(r=>r.primType===primType)){message("For the first two Prims, the Prim types must be different.");return;}
+ try{await ref.add({recordType:"prim-v2",castle,player,primType,loaded,createdAt:firebase.firestore.FieldValue.serverTimestamp(),updatedBy:user.email});$("player").value="";$("loaded").value="0";message("Prim assignment saved to the shared PT cloud database.");}catch(e){message("Could not save: "+e.message);}
+};
+$("rows").onclick=async e=>{const b=e.target.closest("[data-del]");if(!b||!leader())return;const r=typed.find(x=>x.id===b.dataset.del);if(r&&confirm(`Delete ${r.primType} for ${r.player} at ${r.castle}?`)){try{await ref.doc(r.id).delete();message("Typed Prim assignment deleted.");}catch(err){message("Could not delete: "+err.message);}}};
+$("legacyRows").onclick=async e=>{const b=e.target.closest("[data-legacy]");if(!b||!leader())return;const r=legacy.find(x=>x.id===b.dataset.legacy);if(r&&confirm(`Remove old untyped record for ${r.player} at ${r.castle}? Only do this after re-entering the Prims with their correct types.`)){try{await ref.doc(r.id).delete();message("Old record removed.");}catch(err){message("Could not remove old record: "+err.message);}}};
+$("search").addEventListener("input",render);
+$("clearBtn").onclick=async()=>{if(!leader())return;if(!typed.length){message("There are no V2 records to clear.");return;}if(confirm("Delete all typed V2 Prim records? Old records will remain.")){try{const batch=db.batch();typed.forEach(r=>batch.delete(ref.doc(r.id)));await batch.commit();message("All typed V2 records deleted. Legacy records were kept.");}catch(e){message("Could not clear records: "+e.message);}}};
+$("exportBtn").onclick=()=>{const rows=[["Castle","Player","Prim type","Troops loaded","Troop target"],...typed.map(r=>[r.castle,r.player,r.primType,r.loaded,TARGET])];const csv=rows.map(row=>row.map(v=>'"'+String(v??"").replace(/"/g,'""')+'"').join(",")).join("\n");const a=document.createElement("a"),url=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.href=url;a.download="PT-Prim-Assignments-V2.csv";a.click();URL.revokeObjectURL(url);};
+</script>
+</body>
+</html>
