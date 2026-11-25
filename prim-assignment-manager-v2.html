@@ -38,7 +38,7 @@ Only PT castles are available. This tool records leadership assignments and does
 <h2>✍️ Add a Prim</h2>
 <section class="panel">
 <div class="formgrid">
-<div class="field"><label for="castle">PT castle</label><select id="castle"><option>EarthBoundSun</option><option>WeStartHere</option><option>ToxicTalons</option><option>WhoSowsTheWind</option><option>BrotherWarrior</option><option>GhostFire</option></select></div>
+<div class="field"><label for="castle">PT castle</label><select id="castle"><option>EarthBoundSun</option><option>WeStartHere</option><option>ToxicTalons</option><option>WhoSowsTheWind</option><option>BrotherWarrior</option><option>GhostFire</option><option>PhoenixStorm</option></select></div>
 <div class="field"><label for="player">Player name</label><input id="player" placeholder="Exact in-game name" autocomplete="off"></div>
 <div class="field"><label for="primType">Prim type</label><select id="primType"><option>Trapper</option><option>Taunter</option><option>Destroyer</option></select></div>
 </div>
@@ -65,7 +65,7 @@ const firebaseConfig={apiKey:"AIzaSyCDBIYVNVkmyY3bIIKmttI9akfxpNRUF8U",authDomai
 firebase.initializeApp(firebaseConfig);
 const auth=firebase.auth(),db=firebase.firestore(),ref=db.collection("primAssignments");
 const LEADER="phoenixtalons.leadership@gmail.com",TARGET=6500;
-const CASTLES=["EarthBoundSun","WeStartHere","ToxicTalons","WhoSowsTheWind","BrotherWarrior","GhostFire"];
+const CASTLES=["EarthBoundSun","WeStartHere","ToxicTalons","WhoSowsTheWind","BrotherWarrior","GhostFire","PhoenixStorm"];
 const TYPES=["Trapper","Taunter","Destroyer"];
 let user=null,typed=[],legacy=[],unsubscribe=null;
 const $=id=>document.getElementById(id),fmt=n=>Number(n||0).toLocaleString("en-US");
